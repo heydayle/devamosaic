@@ -14,12 +14,12 @@ const currentImageLoaded = (id: string) => {
 </script>
 <template>
   <div v-if="!images.length">
-    <div class="columns-4 gap-4">
+    <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition-opacity duration-500">
       <USkeleton v-for="(item, index) in 30" :key="index" :class="item % 2 === 0 ? 'aspect-3/2' : 'aspect-square'" class="mb-4" />
     </div>
   </div>
   <div v-else>
-    <div class="columns-4 gap-4 transition-opacity duration-500">
+    <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition-opacity duration-500">
       <NuxtImg
         v-for="(item, index) in images"
         :src="item.src"
