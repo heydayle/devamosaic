@@ -13,16 +13,23 @@ const currentImageLoaded = (id: string) => {
 };
 const imgLoaded = computed(() => Object.values(isCurrentLoaded.value).length === props.images.length)
 
+const showed = ref(false)
+watch(imgLoaded, (newVal) => {
+  if (newVal) {
+    setTimeout(() => {
+      showed.value = true
+    }, 1200)
+  }
+})
+
 </script>
 <template>
-  <transition name="slide-fade" :duration="{ enter: 500, leave: 800 }">
-    <div v-if="!finished && !imgLoaded">
-        <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition-opacity duration-500">
-          <USkeleton v-for="(item, index) in 30" :key="index" :class="item % 2 === 0 ? 'aspect-3/2' : 'aspect-square'" class="mb-4" />
-        </div>
-    </div>
-  </transition>
-  <div v-if="finished">
+  <div v-if="!finished">
+      <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition-opacity duration-500">
+        <USkeleton v-for="(item, index) in 30" :key="index" :class="item % 2 === 0 ? 'aspect-3/2' : 'aspect-square'" class="mb-4" />
+      </div>
+  </div>
+  <div v-show="finished">
     <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition duration-500">
       <NuxtImg
         v-for="(item, index) in images"
@@ -43,12 +50,10 @@ const imgLoaded = computed(() => Object.values(isCurrentLoaded.value).length ===
           :src="src"
           :alt="item.alt"
         >
-        <img
+        <USkeleton
           v-show="!isLoaded"
-          :src="item.srcLoading"
-          alt="placeholder"
-          class="w-full h-full object-cover rounded-[10px]"
-        >
+          class="aspect-3/2 rounded-[10px]"
+        />
       </NuxtImg>
     </div>
   </div>
