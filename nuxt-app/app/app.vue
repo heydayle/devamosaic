@@ -1,5 +1,6 @@
 <script setup>
 import Header from "~/components/appLayouts/header.vue";
+import TargetCursor from "~/components/vue-bits/TargetCursor/TargetCursor.vue"
 
 useHead({
   meta: [
@@ -25,35 +26,19 @@ useSeoMeta({
   twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
   twitterCard: 'summary_large_image'
 })
+
 </script>
 
 <template>
   <UApp>
+     <TargetCursor
+        :spin-duration="2"
+        :hide-default-cursor="true"
+    />
     <Header />
 
     <UMain>
       <NuxtPage />
     </UMain>
-
-    <USeparator icon="i-simple-icons-nuxtdotjs" />
-
-    <UFooter>
-      <template #left>
-        <p class="text-sm text-muted">
-          Built with Nuxt UI • © {{ new Date().getFullYear() }}
-        </p>
-      </template>
-
-      <template #right>
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-      </template>
-    </UFooter>
   </UApp>
 </template>
