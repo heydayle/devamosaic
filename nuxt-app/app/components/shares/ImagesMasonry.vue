@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type {SimpleImage} from "~/types/notion";
-import {getImageHeight} from "~/utils/helper";
+import { useWindowSize } from '@vueuse/core';
+import type { SimpleImage } from "~/types/notion";
 
 const props = defineProps<{
   images: SimpleImage[]
@@ -22,40 +22,84 @@ watch(imgLoaded, (newVal) => {
   }
 })
 
+const { width } = useWindowSize();
+
+const columnCount = computed(() => {
+  const currentWidth = width.value;
+
+  if (currentWidth >= 1536) return 5;
+  if (currentWidth >= 768) return 4;
+  if (currentWidth >= 640) return 3;
+  if (currentWidth >= 475) return 2;
+  return 1;
+});
+
+const createColumns = <T,>(items: T[]) => {
+  const count = Math.max(columnCount.value, 1);
+  const columns = Array.from({ length: count }, () => [] as T[]);
+
+  items.forEach((item, index) => {
+    columns[index % count].push(item);
+  });
+
+  return columns;
+};
+
+const imageColumns = computed(() => createColumns(props.images));
+const skeletonColumns = computed(() => createColumns(Array.from({ length: 30 }, (_, index) => index)));
+
 </script>
 <template>
   <div v-if="!finished">
-      <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition-opacity duration-500">
-        <USkeleton v-for="(item, index) in 30" :key="index" :class="item % 2 === 0 ? 'aspect-3/2' : 'aspect-square'" class="mb-4" />
+    <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-5 gap-4 transition-opacity duration-500">
+      <div
+        v-for="(column, columnIndex) in skeletonColumns"
+        :key="`skeleton-column-${columnIndex}`"
+        class="flex flex-col gap-4"
+      >
+        <USkeleton
+          v-for="(item, index) in column"
+          :key="`skeleton-${columnIndex}-${index}`"
+          :class="item % 2 === 0 ? 'aspect-3/2' : 'aspect-square'"
+          class="rounded-[10px]"
+        />
       </div>
+    </div>
   </div>
   <div v-show="finished">
-    <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition duration-500">
-      <NuxtImg
-        v-for="(item, index) in images"
-        :src="item.src"
-        :alt="item.id"
-        preload
-        provider="notion"
-        class="mb-4 w-full h-full object-cover rounded-[10px] transition duration-500 cursor-target"
-        quality="80"
-        @load="currentImageLoaded(item.id)"
-        :custom="true"
-        v-slot="{ src, isLoaded, imgAttrs }"
+    <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-5 gap-4 transition duration-500">
+      <div
+        v-for="(column, columnIndex) in imageColumns"
+        :key="`image-column-${columnIndex}`"
+        class="flex flex-col gap-4"
       >
-        <img
-          v-show="isLoaded"
-          v-bind="imgAttrs"
-          fetchPriority="high"
-          :src="src"
-          :alt="item.alt"
-          onload="this.style.opacity = 1"
+        <NuxtImg
+          v-for="item in column"
+          :key="item.id"
+          :src="item.src"
+          :alt="item.id"
+          preload
+          provider="notion"
+          class="w-full h-full object-cover rounded-[10px] transition duration-500 cursor-target"
+          quality="80"
+          @load="currentImageLoaded(item.id)"
+          :custom="true"
+          v-slot="{ src, isLoaded, imgAttrs }"
         >
-        <USkeleton
-          v-show="!isLoaded"
-          class="aspect-3/2 rounded-[10px]"
-        />
-      </NuxtImg>
+          <img
+            v-show="isLoaded"
+            v-bind="imgAttrs"
+            fetchPriority="high"
+            :src="src"
+            :alt="item.alt"
+            onload="this.style.opacity = 1"
+          >
+          <USkeleton
+            v-show="!isLoaded"
+            class="aspect-3/2 rounded-[10px]"
+          />
+        </NuxtImg>
+      </div>
     </div>
   </div>
 
