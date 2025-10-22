@@ -49,6 +49,7 @@ watch(imgLoaded, (newVal) => {
           fetchPriority="high"
           :src="src"
           :alt="item.alt"
+          onload="this.style.opacity = 1"
         >
         <USkeleton
           v-show="!isLoaded"
@@ -59,3 +60,10 @@ watch(imgLoaded, (newVal) => {
   </div>
 
 </template>
+
+<style scoped>
+  img {
+    opacity: 0;
+    transition-duration: 500ms;
+  }
+</style>
