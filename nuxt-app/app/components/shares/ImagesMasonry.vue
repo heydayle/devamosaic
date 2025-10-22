@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { nextTick } from "vue";
 import type {SimpleImage} from "~/types/notion";
-import {getImageHeight} from "~/utils/helper";
 
 const props = defineProps<{
   images: SimpleImage[]
@@ -8,6 +8,11 @@ const props = defineProps<{
 }>()
 
 const isCurrentLoaded = ref<Record<string, boolean>>({});
+const rowSpans = ref<Record<string, number>>({})
+
+const baseRowHeight = 8
+const defaultRowSpan = 60
+
 const currentImageLoaded = (id: string) => {
   isCurrentLoaded.value[id] = true;
 };
@@ -22,47 +27,95 @@ watch(imgLoaded, (newVal) => {
   }
 })
 
+watch(() => props.images, () => {
+  rowSpans.value = {}
+})
+
+const calculateRowSpan = (img: HTMLImageElement) => {
+  const width = img.parentElement?.clientWidth || img.clientWidth || img.naturalWidth || 1
+  const naturalWidth = img.naturalWidth || width
+  const naturalHeight = img.naturalHeight || width
+  const ratio = naturalWidth ? naturalHeight / naturalWidth : 1
+  const displayedHeight = width * ratio
+  return Math.max(Math.round(displayedHeight / baseRowHeight), 1)
+}
+
+const handleImageLoad = (id: string, event: Event) => {
+  currentImageLoaded(id)
+  const img = event.target as HTMLImageElement | null
+  if (!img) return
+
+  nextTick(() => {
+    rowSpans.value[id] = calculateRowSpan(img)
+    img.style.opacity = "1"
+  })
+}
+
+const getItemStyle = (id: string) => ({
+  "--row-span": rowSpans.value[id] ?? defaultRowSpan,
+})
 </script>
 <template>
   <div v-if="!finished">
-      <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition-opacity duration-500">
-        <USkeleton v-for="(item, index) in 30" :key="index" :class="item % 2 === 0 ? 'aspect-3/2' : 'aspect-square'" class="mb-4" />
-      </div>
+    <div class="grid gap-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-5 transition-opacity duration-500">
+      <USkeleton
+        v-for="(item, index) in 30"
+        :key="index"
+        :class="item % 2 === 0 ? 'aspect-3/2' : 'aspect-square'"
+        class="w-full rounded-[10px]"
+      />
+    </div>
   </div>
   <div v-show="finished">
-    <div class="gap-4 xs:columns-2 sm:columns-3 md:columns-4 2xl:columns-5 transition duration-500">
-      <NuxtImg
-        v-for="(item, index) in images"
-        :src="item.src"
-        :alt="item.id"
-        preload
-        provider="notion"
-        class="mb-4 w-full h-full object-cover rounded-[10px] transition duration-500 cursor-target"
-        quality="80"
-        @load="currentImageLoaded(item.id)"
-        :custom="true"
-        v-slot="{ src, isLoaded, imgAttrs }"
+    <div class="masonry-grid grid gap-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 2xl:grid-cols-5 transition duration-500">
+      <div
+        v-for="item in images"
+        :key="item.id"
+        class="masonry-item cursor-target"
+        :style="getItemStyle(item.id)"
       >
-        <img
-          v-show="isLoaded"
-          v-bind="imgAttrs"
-          fetchPriority="high"
-          :src="src"
-          :alt="item.alt"
-          onload="this.style.opacity = 1"
+        <NuxtImg
+          :src="item.src"
+          :alt="item.id"
+          preload
+          provider="notion"
+          quality="80"
+          :custom="true"
+          v-slot="{ src, isLoaded, imgAttrs }"
         >
-        <USkeleton
-          v-show="!isLoaded"
-          class="aspect-3/2 rounded-[10px]"
-        />
-      </NuxtImg>
+          <img
+            v-show="isLoaded"
+            v-bind="imgAttrs"
+            fetchPriority="high"
+            :src="src"
+            :alt="item.alt"
+            class="w-full h-full object-cover rounded-[10px] transition duration-500 cursor-target"
+            @load="event => handleImageLoad(item.id, event)"
+          >
+          <USkeleton
+            v-show="!isLoaded"
+            class="w-full h-full rounded-[10px]"
+          />
+        </NuxtImg>
+      </div>
     </div>
   </div>
 
 </template>
 
 <style scoped>
-  img {
+  .masonry-grid {
+    display: grid;
+    grid-auto-flow: dense;
+    grid-auto-rows: 8px;
+    align-items: start;
+  }
+
+  .masonry-item {
+    grid-row-end: span var(--row-span, 60);
+  }
+
+  .masonry-item img {
     opacity: 0;
     transition-duration: 500ms;
   }
