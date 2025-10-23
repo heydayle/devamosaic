@@ -61,6 +61,7 @@ interface SimpleImage {
   img: string
   url: string
   height?: number
+  description?: string
 }
 interface NotionResponse {
   object: "list";

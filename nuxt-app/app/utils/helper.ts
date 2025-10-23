@@ -22,6 +22,7 @@ export function convertNotionPagesToImageList(notionPages: NotionPage[]): Simple
       srcLoading: "",
       img: "",
       url: "",
+      description: "",
       // height: 800,
     };
 
@@ -53,6 +54,13 @@ export function convertNotionPagesToImageList(notionPages: NotionPage[]): Simple
       if (titleText) {
         result.name = titleText;
         result.alt = titleText;
+      }
+    }
+    const descriptionProperty = page.properties.description;
+    if (descriptionProperty && descriptionProperty.type === "rich_text" && descriptionProperty.rich_text.length > 0) {
+      const descriptionText = descriptionProperty.rich_text.map((t: { plain_text: string }) => t.plain_text).join("");
+      if (descriptionText) {
+        result.description = descriptionText;
       }
     }
 

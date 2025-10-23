@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useWindowSize } from '@vueuse/core';
 import type { SimpleImage } from "~/types/notion";
+import GlassSurface from "~/components/vue-bits/GlassSurface/GlassSurface.vue";
 
 const props = defineProps<{
   images: SimpleImage[]
@@ -73,32 +74,66 @@ const skeletonColumns = computed(() => createColumns(Array.from({ length: 30 }, 
         :key="`image-column-${columnIndex}`"
         class="flex flex-col gap-4"
       >
-        <NuxtImg
-          v-for="item in column"
-          :key="item.id"
-          :src="item.src"
-          :alt="item.id"
-          preload
-          provider="notion"
-          class="w-full h-full object-cover rounded-[10px] transition duration-500 cursor-target"
-          quality="80"
-          @load="currentImageLoaded(item.id)"
-          :custom="true"
-          v-slot="{ src, isLoaded, imgAttrs }"
-        >
-          <img
-            v-show="isLoaded"
-            v-bind="imgAttrs"
-            fetchPriority="high"
-            :src="src"
-            :alt="item.alt"
-            onload="this.style.opacity = 1"
+          <NuxtImg
+            v-for="item in column"
+            :key="item.id"
+            :src="item.src"
+            :alt="item.id"
+            preload
+            provider="notion"
+            class="w-full h-full object-cover rounded-[10px] transition duration-500 cursor-target"
+            quality="80"
+            @load="currentImageLoaded(item.id)"
+            :custom="true"
+            v-slot="{ src, isLoaded, imgAttrs }"
           >
-          <USkeleton
-            v-show="!isLoaded"
-            class="aspect-3/2 rounded-[10px]"
-          />
-        </NuxtImg>
+            <UPopover
+              arrow
+              :ui="{
+                content: 'bg-transparent ring-0 shadow-none',
+              }"
+            >
+              <img
+                v-show="isLoaded"
+                v-bind="imgAttrs"
+                fetchPriority="high"
+                :src="src"
+                :alt="item.alt"
+                onload="this.style.opacity = 1"
+              >
+              <template #content>
+                  <div class="p-2 w-full">
+                  <ClientOnly>
+                    <GlassSurface
+                      width="100%"
+                      height="auto"
+                      :border-radius="15"
+                      :blur="100"
+                      :displace="6.8"
+                      :distortion-scale="20"
+                      :saturation="0.8"
+                      :brightness="30"
+                      class-name="m-auto"
+                    >
+                    <div class="flex flex-col p-2">
+                      <p class="text-2xl text-white break-words font-serif">
+                        {{ item.name || 'No description available.' }}
+                      </p>
+                      <p class="text-lg text-white break-words font-serif">
+                        {{ item.description || 'No additional details.' }}
+                      </p>
+                    </div>
+                      
+                    </GlassSurface>
+                    </ClientOnly>
+                  </div>
+              </template>
+            </UPopover>
+              <USkeleton
+                v-show="!isLoaded"
+                class="aspect-3/2 rounded-[10px]"
+              />
+          </NuxtImg>
       </div>
     </div>
   </div>
