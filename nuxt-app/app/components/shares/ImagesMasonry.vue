@@ -98,6 +98,7 @@ const skeletonColumns = computed(() => createColumns(Array.from({ length: 30 }, 
             provider="notion"
             class="w-full h-fit object-contain rounded-[10px] transition duration-500 cursor-target"
             quality="80"
+            format="webp"
             @load="currentImageLoaded(item.id)"
             :custom="true"
             v-slot="{ src, isLoaded, imgAttrs }"
@@ -105,7 +106,7 @@ const skeletonColumns = computed(() => createColumns(Array.from({ length: 30 }, 
             <UPopover
               arrow
               :ui="{
-                content: 'bg-transparent ring-0 shadow-none',
+                content: 'bg-transparent ring-0 shadow-none xs:max-w-xs md:max-w-md',
               }"
             >
               <img
@@ -131,7 +132,7 @@ const skeletonColumns = computed(() => createColumns(Array.from({ length: 30 }, 
                       class-name="m-auto"
                     >
                     <div class="flex flex-col p-2">
-                      <p class="text-2xl text-white break-words font-serif">
+                      <p class="text-2xl text-white break-words font-serif font-bold mb-2 underline">
                         {{ item.name || 'No description available.' }}
                       </p>
                       <p class="text-lg text-white break-words font-serif">
