@@ -45,8 +45,23 @@ const createColumns = <T,>(items: T[]) => {
 
   return columns;
 };
+const imageShuffled = computed(() => {
+  let currentIndex = props.images.length, randomIndex;
+  const array = [...props.images];
 
-const imageColumns = computed(() => createColumns(props.images));
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+});
+const imageColumns = computed(() => createColumns(imageShuffled.value));
 const skeletonColumns = computed(() => createColumns(Array.from({ length: 30 }, (_, index) => index)));
 
 </script>
@@ -81,7 +96,7 @@ const skeletonColumns = computed(() => createColumns(Array.from({ length: 30 }, 
             :alt="item.id"
             preload
             provider="notion"
-            class="w-full h-full object-cover rounded-[10px] transition duration-500 cursor-target"
+            class="w-full h-fit object-contain rounded-[10px] transition duration-500 cursor-target"
             quality="80"
             @load="currentImageLoaded(item.id)"
             :custom="true"
