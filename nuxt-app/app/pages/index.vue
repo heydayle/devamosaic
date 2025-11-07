@@ -61,7 +61,7 @@ const dontShowAgain = ref(!shouldShowPopup.value)
 const tryOpenPopup = () => {
   if (!pending.value && isFinished.value && shouldShowPopup.value && !hasShownPopup.value) {
     isModalOpen.value = true
-    hasShownPopup.value = true
+    hasShownPopup.value = false
   }
 }
 
@@ -76,6 +76,8 @@ if (process.client) {
 
   watch(shouldShowPopup, (value) => {
     dontShowAgain.value = !value
+    if (!value)
+      shouldShowPopup.value = !value
   })
 
   watch(dontShowAgain, (value) => {
@@ -128,8 +130,7 @@ onMounted(async () => {
               </p>
             </div>
             <div class="flex flex-col gap-4">
-              <UCheckbox v-model="dontShowAgain" color="neutral" size="lg" label="Don't show again" class="text-2xl" :ui="{ label: 'text-lg' }" />
-              <UButton color="primary" class="mx-auto text-2xl font-semibold" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
+              <UButton color="neutral" class="mx-auto text-lg font-semibold" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
                 Explore more
               </UButton>
             </div>
