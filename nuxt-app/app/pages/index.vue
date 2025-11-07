@@ -104,32 +104,34 @@ onMounted(async () => {
       <ImagesMasonry :images="images" :finished="isFinished" />
     </div>
     <UModal v-model="isModalOpen" :ui="{ width: 'max-w-xl' }" @close="handleCloseModal">
-      <GlassSurface
-        :width="'100%'"
-        :height="'auto'"
-        :border-radius="28"
-        :background-opacity="0.18"
-        :saturation="1.2"
-        class-name="w-full"
-      >
-        <div class="flex flex-col gap-6 text-center px-8 py-10">
-          <div class="space-y-3">
-            <h2 class="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
-              Chào mừng bạn đến với DevA Mosaic!
-            </h2>
-            <p class="text-neutral-700 dark:text-neutral-200">
-              Mỗi bức ảnh ở đây là một mảnh ghép nhỏ của cộng đồng sáng tạo. Hy vọng bạn sẽ tìm thấy cảm hứng
-              và chia sẻ yêu thương trong từng khoảnh khắc.
-            </p>
+      <template #content>
+        <GlassSurface
+          :width="'100%'"
+          :height="'auto'"
+          :border-radius="28"
+          :background-opacity="0.18"
+          :saturation="1.2"
+          class-name="w-full"
+        >
+          <div class="flex flex-col gap-6 text-center px-8 py-10">
+            <div class="space-y-3">
+              <h2 class="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+                Chào mừng bạn đến với DevA Mosaic!
+              </h2>
+              <p class="text-neutral-700 dark:text-neutral-200">
+                Mỗi bức ảnh ở đây là một mảnh ghép nhỏ của cộng đồng sáng tạo. Hy vọng bạn sẽ tìm thấy cảm hứng
+                và chia sẻ yêu thương trong từng khoảnh khắc.
+              </p>
+            </div>
+            <div class="flex flex-col gap-4">
+              <UCheckbox v-model="dontShowAgain" label="Không hiển thị lần sau" class="justify-center" />
+              <UButton color="primary" class="mx-auto" @click="handleCloseModal">
+                Tiếp tục khám phá
+              </UButton>
+            </div>
           </div>
-          <div class="flex flex-col gap-4">
-            <UCheckbox v-model="dontShowAgain" label="Không hiển thị lần sau" class="justify-center" />
-            <UButton color="primary" class="mx-auto" @click="handleCloseModal">
-              Tiếp tục khám phá
-            </UButton>
-          </div>
-        </div>
-      </GlassSurface>
+        </GlassSurface>
+      </template>
     </UModal>
   </div>
 </template>
