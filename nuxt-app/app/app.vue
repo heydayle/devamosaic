@@ -31,12 +31,11 @@ useSeoMeta({
 
 <template>
   <UApp>
-     <TargetCursor
+     <!--<TargetCursor
         :spin-duration="2"
         :hide-default-cursor="true"
-    />
+    /> -->
     <Header />
-
     <UMain>
       <NuxtPage />
     </UMain>
