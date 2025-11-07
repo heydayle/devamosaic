@@ -103,7 +103,12 @@ onMounted(async () => {
     <div v-else class="pt-[120px] px-4 pb-4">
       <ImagesMasonry :images="images" :finished="isFinished" />
     </div>
-    <UModal v-model="isModalOpen" :ui="{ width: 'max-w-xl' }" @close="handleCloseModal">
+    <UModal
+      :open="isModalOpen"
+      :ui="{ width: 'max-w-xl' }"
+      @close="handleCloseModal"
+      @update:open="value => (isModalOpen = value)"
+    >
       <template #content>
         <GlassSurface
           :width="'100%'"
