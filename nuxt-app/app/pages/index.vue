@@ -121,17 +121,16 @@ onMounted(async () => {
           <div class="flex flex-col gap-6 text-center px-8 py-10">
             <div class="space-y-3">
               <h2 class="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
-                Chào mừng bạn đến với DevA Mosaic!
+                Welcome to DEVAMOSAIC
               </h2>
               <p class="text-neutral-700 dark:text-neutral-200">
-                Mỗi bức ảnh ở đây là một mảnh ghép nhỏ của cộng đồng sáng tạo. Hy vọng bạn sẽ tìm thấy cảm hứng
-                và chia sẻ yêu thương trong từng khoảnh khắc.
+                Don't just save work tabs, keep those moments in your heart. If you see yourself in any of the photos here, stay a little longer!
               </p>
             </div>
             <div class="flex flex-col gap-4">
               <UCheckbox v-model="dontShowAgain" label="Không hiển thị lần sau" class="justify-center" />
-              <UButton color="primary" class="mx-auto" @click="handleCloseModal">
-                Tiếp tục khám phá
+              <UButton color="primary" class="mx-auto" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
+                Explore more
               </UButton>
             </div>
           </div>
