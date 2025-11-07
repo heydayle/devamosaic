@@ -128,7 +128,7 @@ onMounted(async () => {
               </p>
             </div>
             <div class="flex flex-col gap-4">
-              <UCheckbox v-model="dontShowAgain" color="neutral" size="xl" label="Don't show again" class="text-2xl" />
+              <UCheckbox v-model="dontShowAgain" color="neutral" size="lg" label="Don't show again" class="text-2xl" :ui="{ label: 'text-lg' }" />
               <UButton color="primary" class="mx-auto text-2xl font-semibold" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
                 Explore more
               </UButton>
