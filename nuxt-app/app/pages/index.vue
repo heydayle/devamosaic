@@ -105,7 +105,7 @@ onMounted(async () => {
     </div>
     <UModal
       :open="isModalOpen"
-      :ui="{ width: 'max-w-xl' }"
+      :ui="{ width: 'max-w-xl', content: 'bg-transparent ring-0 shadow-none' }"
       @close="handleCloseModal"
       @update:open="value => (isModalOpen = value)"
     >
