@@ -118,7 +118,7 @@ onMounted(async () => {
           :saturation="1.2"
           class-name="w-full"
         >
-          <div class="flex flex-col gap-6 text-center px-8 py-10">
+          <div class="flex flex-col gap-6 px-8 py-10">
             <div class="space-y-3">
               <h2 class="text-4xl font-semibold text-neutral-900 dark:text-neutral-50">
                 Welcome to Devamosaic
@@ -128,7 +128,7 @@ onMounted(async () => {
               </p>
             </div>
             <div class="flex flex-col gap-4">
-              <UCheckbox v-model="dontShowAgain" label="Don't show again" class="text-2xl" />
+              <UCheckbox v-model="dontShowAgain" color="neutral" size="xl" label="Don't show again" class="text-2xl" />
               <UButton color="primary" class="mx-auto text-2xl font-semibold" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
                 Explore more
               </UButton>
