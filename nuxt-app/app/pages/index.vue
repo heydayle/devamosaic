@@ -120,16 +120,16 @@ onMounted(async () => {
         >
           <div class="flex flex-col gap-6 text-center px-8 py-10">
             <div class="space-y-3">
-              <h2 class="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
-                Welcome to DEVAMOSAIC
+              <h2 class="text-4xl font-semibold text-neutral-900 dark:text-neutral-50">
+                Welcome to Devamosaic
               </h2>
-              <p class="text-neutral-700 dark:text-neutral-200">
+              <p class="text-2xl text-neutral-700 dark:text-neutral-200">
                 Don't just save work tabs, keep those moments in your heart. If you see yourself in any of the photos here, stay a little longer!
               </p>
             </div>
             <div class="flex flex-col gap-4">
-              <UCheckbox v-model="dontShowAgain" label="Không hiển thị lần sau" class="justify-center" />
-              <UButton color="primary" class="mx-auto" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
+              <UCheckbox v-model="dontShowAgain" label="Don't show again" class="text-2xl" />
+              <UButton color="primary" class="mx-auto text-2xl font-semibold" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
                 Explore more
               </UButton>
             </div>
