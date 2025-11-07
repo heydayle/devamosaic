@@ -6,7 +6,8 @@ import { useNotion } from "~/composables/useNotion";
 import type {NotionResponse} from "~/types/notion";
 import Masonry from "~/components/vue-bits/Masonry/Masonry.vue";
 import ImagesMasonry from "~/components/shares/ImagesMasonry.vue";
-import {useIntersectionObserver} from "@vueuse/core";
+import GlassSurface from "~/components/vue-bits/GlassSurface/GlassSurface.vue";
+import {useIntersectionObserver, useLocalStorage} from "@vueuse/core";
 
 const NOTION_API_URL = '/api/notion/images'
 const OPTIONS_API: Record<string, string> = {
@@ -52,6 +53,38 @@ const initScroll = () => {
   })
 }
 
+const shouldShowPopup = useLocalStorage('devamosaic-welcome-popup', true)
+const isModalOpen = ref(false)
+const hasShownPopup = ref(false)
+const dontShowAgain = ref(!shouldShowPopup.value)
+
+const tryOpenPopup = () => {
+  if (!pending.value && isFinished.value && shouldShowPopup.value && !hasShownPopup.value) {
+    isModalOpen.value = true
+    hasShownPopup.value = false
+  }
+}
+
+const handleCloseModal = () => {
+  isModalOpen.value = false
+}
+
+if (process.client) {
+  watch([pending, isFinished], () => {
+    tryOpenPopup()
+  }, { immediate: true })
+
+  watch(shouldShowPopup, (value) => {
+    dontShowAgain.value = !value
+    if (!value)
+      shouldShowPopup.value = !value
+  })
+
+  watch(dontShowAgain, (value) => {
+    shouldShowPopup.value = !value
+  })
+}
+
 onMounted(async () => {
   requestAnimationFrame(async () => {
     initScroll()
@@ -72,5 +105,38 @@ onMounted(async () => {
     <div v-else class="pt-[120px] px-4 pb-4">
       <ImagesMasonry :images="images" :finished="isFinished" />
     </div>
+    <UModal
+      :open="isModalOpen"
+      :ui="{ width: 'max-w-xl', content: 'bg-transparent ring-0 shadow-none' }"
+      @close="handleCloseModal"
+      @update:open="value => (isModalOpen = value)"
+    >
+      <template #content>
+        <GlassSurface
+          :width="'100%'"
+          :height="'auto'"
+          :border-radius="28"
+          :background-opacity="0.18"
+          :saturation="1.2"
+          class-name="w-full"
+        >
+          <div class="flex flex-col gap-6 px-8 py-10">
+            <div class="space-y-3">
+              <h2 class="text-4xl font-semibold text-neutral-900 dark:text-neutral-50">
+                Welcome to Devamosaic
+              </h2>
+              <p class="text-2xl text-neutral-700 dark:text-neutral-200">
+                Don't just save work tabs, keep those moments in your heart. If you see yourself in any of the photos here, stay a little longer!
+              </p>
+            </div>
+            <div class="flex flex-col gap-4">
+              <UButton color="neutral" class="mx-auto text-lg font-semibold" trailing-icon="i-lucide-arrow-right" @click="handleCloseModal">
+                Explore more
+              </UButton>
+            </div>
+          </div>
+        </GlassSurface>
+      </template>
+    </UModal>
   </div>
 </template>
